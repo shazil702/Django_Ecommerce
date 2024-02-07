@@ -39,6 +39,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('logout/', views.logout_page, name='logout'),
     path('admin/', include('adminpanel.urls'),name='admin_panel'),
+    path('chatbot/',include('Chatbot.urls'),name='chatbot')
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

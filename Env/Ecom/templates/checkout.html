@@ -345,7 +345,7 @@
 	document.addEventListener('DOMContentLoaded', function(){
 		var option = {
 			"key": "rzp_test_6gQ0trEdPai7zw",
-			"amount": "50000",
+			"amount": "{% widthratio all_total 1 100 %}",
             "currency": "INR",
             "name": "AL MaHa",
             "description": "Donation",
@@ -371,8 +371,8 @@
 				e.preventDefault();
 				rzp.open();
 
-			)}
-	)}
+	})
+			})
 
 	</script>
     

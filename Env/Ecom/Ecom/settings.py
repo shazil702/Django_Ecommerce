@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'Mainapp',
     'adminpanel',
     'Checkout',
+    'Chatbot'
 
 ]
 
