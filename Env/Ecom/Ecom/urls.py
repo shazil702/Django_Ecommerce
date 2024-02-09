@@ -25,7 +25,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('about/', views.about, name='about'),
     path('blog/', views.blog, name='blog'),
-    path('blog-single/', views.blog_single, name='blog-single'),
+    path('search/', views.search, name='search'),
     path('product-single/<int:pk>/', views.product_single, name='product-single'),
     path('shop/', views.shop, name='shop'),
     path('cart/', views.cart, name='cart'),
@@ -35,11 +35,11 @@ urlpatterns = [
     path('delete_cart/<int:pk>/',views.delete_cart, name='delete_cart'),
     path('checkout/', views.checkout, name='checkout'),
     path('contact/', views.contact, name='contact'),
-    path('login/', views.login_page, name='login'),
-    path('register/', views.register, name='register'),
+    path('login/',(views.login_page), name='login'),
+    path('register/',(views.register), name='register'),
     path('logout/', views.logout_page, name='logout'),
     path('admin/', include('adminpanel.urls'),name='admin_panel'),
-    path('chatbot/',include('Chatbot.urls'),name='chatbot')
+    
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -8198,6 +8198,7 @@ h1, h2, h3, h4, h5,
    top: 10px;
    right: 10px;
    font-size: 23px;
+   background-color: transparent;
  }
   @media (max-width: 991.98px) {
     .ftco-navbar-light {

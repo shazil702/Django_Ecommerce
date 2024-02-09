@@ -1,3 +1,4 @@
+
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -7,13 +8,21 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse,HttpResponse
 from Checkout.models import *
 import razorpay
+from django.views.decorators.cache import never_cache
 
 # Create your views here.
 def about(request):
     return render(request, 'about.html')
 
-def blog_single(request):
-    return render(request, 'blog-single.html')
+def shop(request):
+    get_product= Product.objects.all()
+    return render(request,'shop.html',{'get_products':get_product})
+
+def search(request):
+    if request.method == 'POST':
+        query = request.POST['search_product']
+        get_product = Product.objects.filter(product_name__icontains=query)
+        return render(request, 'search.html',{'get_products':get_product})
 
 def blog(request):
     return render(request, 'blog.html')
@@ -111,12 +120,7 @@ def product_single(request,pk):
     get_product=Product.objects.filter(product_id=pk)
     return render(request, 'product-single.html',{'get_products':get_product})
     
-    
-
-def shop(request):
-    get_product= Product.objects.all()
-    return render(request,'shop.html',{'get_products':get_product})
-
+@never_cache
 def login_page(request):
     
     error_message= None
@@ -133,7 +137,8 @@ def login_page(request):
        
         else:
             error_message = "Invalid Details"
-    return render(request, 'login.html',{'erroe_message':error_message})
+    return render(request, 'login.html',{'error_message':error_message})
+
 
 def register(request):
      if request.method == 'POST':

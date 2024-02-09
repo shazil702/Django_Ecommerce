@@ -57,11 +57,12 @@
 			<div class="container">
 			  <div class="row no-gutters d-flex align-items-start align-items-center px-md-0">
 				  <div class="col-lg-12">
-					  <form action="#" class="search-form">
+					  <form action="{% url 'search' %}" class="search-form" method="post" enctype="multipart/form-data">
+						  {% csrf_token %}
 						  <div class="form-group d-flex">
-							  <input type="text" class="form-control" id="search-box" placeholder="Search products">
+							  <input type="text" class="form-control" id="search-box" placeholder="Search products" name="search_product">
 							  <!-- <input type="submit" value="Search" id="search-button" class="submit"> -->
-							  <span class="icon-search" id="search-icon"></span>
+							  <button class="icon-search" id="search-icon" type="submit"></button>
 						  </div>
 					  </form>
 				  </div>
