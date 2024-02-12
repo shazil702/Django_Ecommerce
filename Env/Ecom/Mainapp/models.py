@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
+class Category(models.Model):
+    name = models.CharField(max_length=50)
+    
+    def __str__(self):
+        return self.name
 class Product(models.Model):
     LIVE=1
     DELETE=0
@@ -14,6 +19,7 @@ class Product(models.Model):
     product_price = models.FloatField()
     product_description = models.TextField()
     product_image = models.ImageField(upload_to='product_images')
+    product_category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
     product_status = models.IntegerField(choices=STATUS_CHOICES,default=LIVE)
     
     def __str__(self):

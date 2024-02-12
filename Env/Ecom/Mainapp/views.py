@@ -9,6 +9,7 @@ from django.http import JsonResponse,HttpResponse
 from Checkout.models import *
 import razorpay
 from django.views.decorators.cache import never_cache
+from django.http import Http404
 
 # Create your views here.
 def about(request):
@@ -158,3 +159,8 @@ def register(request):
 def logout_page(request):
     logout(request)
     return redirect('/')
+
+def category(request,pk):
+    get_cat = Category.objects.get(name=pk)
+    get_product=Product.objects.filter(product_category=get_cat)
+    return render(request, 'category.html',{'get_products':get_product, 'get_cat':get_cat})
