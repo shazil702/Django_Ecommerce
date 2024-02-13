@@ -10684,3 +10684,18 @@ textarea.form-control {
       font-size: 10px; 
       padding: 10px 10px;
   }
+  #quantity_btn:hover {
+    background-color: #dbcc8f;
+    color: #fff;
+  }
+  #search_price_btn {
+    border-radius: 10px; 
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+#search_price_btn:hover {
+    background-color: #333;
+}

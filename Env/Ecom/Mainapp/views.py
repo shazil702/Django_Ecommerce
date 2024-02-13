@@ -164,3 +164,12 @@ def category(request,pk):
     get_cat = Category.objects.get(name=pk)
     get_product=Product.objects.filter(product_category=get_cat)
     return render(request, 'category.html',{'get_products':get_product, 'get_cat':get_cat})
+def search_price(request):
+    if request.method == 'POST':
+       min_range = int(request.POST['from'])
+       max_range = int(request.POST['to'])
+       products = Product.objects.filter(product_price__range=(min_range,max_range))
+       return render(request,'category.html', {'get_products':products, 'min':min_range ,'max':max_range })
+    error_message = 'No such product'
+    return render(request,'shop.html',{'error_message':error_message})
+
