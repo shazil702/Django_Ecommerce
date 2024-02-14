@@ -10699,3 +10699,10 @@ textarea.form-control {
 #search_price_btn:hover {
     background-color: #333;
 }
+/* #coupon-div{
+  float: right;
+  display: flex;
+  justify-content: end;
+  align-items: end;
+  width: 50%;
+} */

@@ -9,7 +9,7 @@ from django.http import JsonResponse,HttpResponse
 from Checkout.models import *
 import razorpay
 from django.views.decorators.cache import never_cache
-from django.http import Http404
+from django.utils import timezone
 
 # Create your views here.
 def about(request):
@@ -93,6 +93,8 @@ def checkout(request):
         adress_user = request.user
         adress = Adress(adress_name=adress_name,adress_lastname=adress_lastname,adress_state=adress_state,adress_house=adress_house,adress_area=adress_area,adress_city=adress_city,adress_phone=adress_phone,adress_pincode=adress_pincode,adress_user=adress_user)
         adress.save()
+
+        
         
         client = razorpay.Client(auth=("rzp_test_6gQ0trEdPai7zw", "8BPqLZ2nzJMX3sobgMMic4W2"))
         order_amount = int(all_total*100)
@@ -106,9 +108,20 @@ def checkout(request):
            
         })
         return render(request, 'checkout.html', { 'order_id': order['id'], 'razorpay_key': 'rzp_test_6gQ0trEdPai7zw'})
-        
+    
+    active_coupon = Coupon.objects.filter(active = True, coupen_from__lte = timezone.now(), coupen_to__gte = timezone.now())
    
-    return render(request, 'checkout.html', {'total_price' : total_price, 'all_total': all_total})
+    return render(request, 'checkout.html', {'total_price' : total_price, 'all_total': all_total, 'active_coupon': active_coupon})
+
+def apply_coupon(request):
+    total_price = request.session.get('total_price', 0)
+    all_total = request.session.get('all_total', 0)
+    if request.method == 'POST':
+        code = request.POST['coupon_code']
+        coupon = Coupon.objects.get(coupen_code=code, active = True, coupen_from__lte = timezone.now(), coupen_to__gte = timezone.now())
+        total_price = total_price - coupon.coupen_discount
+        all_total = all_total - coupon.coupen_discount
+        return render(request, 'checkout.html', {'total_price': total_price, 'all_total': all_total})
 
 def contact(request):
     return render(request,'contact.html')
@@ -169,7 +182,11 @@ def search_price(request):
        min_range = int(request.POST['from'])
        max_range = int(request.POST['to'])
        products = Product.objects.filter(product_price__range=(min_range,max_range))
-       return render(request,'category.html', {'get_products':products, 'min':min_range ,'max':max_range })
+       if products.exists():
+        return render(request,'category.html', {'get_products':products, 'min':min_range ,'max':max_range })
+       else:
+           error_message = 'No such product'
+           return render(request,'shop.html',{'error_message':error_message})
     error_message = 'No such product'
     return render(request,'shop.html',{'error_message':error_message})
 

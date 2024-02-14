@@ -94,11 +94,14 @@
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-xl-10 ftco-animate">
+		<div class="row">
+			<div class="col-md-6">
+			
 						<form action="#" class="billing-form" method="post" enctype="multipart/form-data">
 							{% csrf_token %}
 							<h3 class="mb-4 billing-heading">Billing Details</h3>
 	          	<div class="row align-items-end">
-	          		<div class="col-md-6">
+	          		<div class="col-md-8">
 	                <div class="form-group">
 	                	<label for="firstname">Firt Name</label>
 	                  <input type="text" class="form-control" placeholder="John" name="firstname" required>
@@ -176,8 +179,35 @@
                 </div>
 	            </div>
 	          <!-- END -->
+			</form>
+	  </div>
 
-
+	  <div class="col-md-6">
+		
+			<div class="coupon" id="coupon-div">
+			<form action="{% url 'apply_coupon' %}" method="post" enctype="multipart/form-data">
+				{% csrf_token %}
+				<h3>Coupons</h3>
+				<br>
+				<input type="text" name="coupon_code" id="coupon"  placeholder="Enter your coupon code" required>
+				<br>
+				<br>
+				<button type="submit" class="btn btn-primary py-3 px-5">Apply Coupon</button>
+			
+			</form>
+			<br>
+			{% if active_coupon %}
+			    <h5>Availabe Coupons For You</h5>
+				{% for coupon in active_coupon %}
+				    <ul>
+						<li>Enter {{ coupon.coupen_code }} for ₹{{ coupon.coupen_discount }} off</li>
+					</ul>
+					{% endfor %}
+					{% endif %}
+				</div>
+				</div>
+	  </div>
+	  
 	          <div class="row mt-5 pt-3 d-flex">
 	          	<div class="col-md-6 d-flex">
 	          		<div class="cart-detail cart-total bg-light p-3 p-md-4">
@@ -239,7 +269,9 @@
           </div> <!-- .col-md-8 -->
         </div>
       </div>
-	  </form>
+	  
+
+	 
     </section> <!-- .section -->
 		
 

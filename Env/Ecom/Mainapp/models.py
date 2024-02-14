@@ -7,6 +7,17 @@ class Category(models.Model):
     
     def __str__(self):
         return self.name
+
+class Coupon(models.Model):
+    coupon_name = models.CharField(max_length=200)
+    coupen_code = models.CharField(max_length=200)
+    coupen_discount = models.FloatField()
+    coupen_from = models.DateTimeField()
+    coupen_to = models.DateTimeField()
+    active = models.BooleanField()
+    
+    def __str__(self):
+        return self.coupon_name
 class Product(models.Model):
     LIVE=1
     DELETE=0
