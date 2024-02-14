@@ -95,7 +95,7 @@
         <div class="row justify-content-center">
           <div class="col-xl-10 ftco-animate">
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-8">
 			
 						<form action="#" class="billing-form" method="post" enctype="multipart/form-data">
 							{% csrf_token %}
@@ -182,7 +182,7 @@
 			</form>
 	  </div>
 
-	  <div class="col-md-6">
+	  <div class="col-md-3">
 		
 			<div class="coupon" id="coupon-div">
 			<form action="{% url 'apply_coupon' %}" method="post" enctype="multipart/form-data">
@@ -204,6 +204,11 @@
 					</ul>
 					{% endfor %}
 					{% endif %}
+					{% if messages %}
+					
+					<p>{{ messages }}</p>
+					
+					{%endif%}
 				</div>
 				</div>
 	  </div>
@@ -216,6 +221,12 @@
 		    						<span>Subtotal</span>
 		    						<span>₹{{ total_price }}</span>
 		    					</p>
+								{% if coupon_disc %}
+                                <p class="d-flex">
+		    								<span>Coupon Discount</span>
+											<span>- ₹{{ coupon_disc }}</span>
+											</p>
+											{% endif %}
 		    					<p class="d-flex">
 		    						<span>Delivery</span>
 		    						<span>₹60.0</span>
@@ -261,7 +272,7 @@
 									</div>
 									<!-- <p><a href="#"class="btn btn-primary py-3 px-4">Place an order</a></p> -->
 									
-									<button type="submit" id="rzp-button"> place an order</button>
+									<button type="submit" id="rzp-button" class="btn btn-primary py-3 px-5">place an order</button>
 									
 								</div>
 	          	</div>

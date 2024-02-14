@@ -10,10 +10,12 @@ class Category(models.Model):
 
 class Coupon(models.Model):
     coupon_name = models.CharField(max_length=200)
-    coupen_code = models.CharField(max_length=200)
+    coupen_code = models.CharField(max_length=200, unique=True)
     coupen_discount = models.FloatField()
     coupen_from = models.DateTimeField()
     coupen_to = models.DateTimeField()
+    coupen_min_amount = models.FloatField(default=0.0)
+    coupen_maxuse = models.FloatField(default=0.0)
     active = models.BooleanField()
     
     def __str__(self):

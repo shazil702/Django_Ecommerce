@@ -119,9 +119,11 @@ def apply_coupon(request):
     if request.method == 'POST':
         code = request.POST['coupon_code']
         coupon = Coupon.objects.get(coupen_code=code, active = True, coupen_from__lte = timezone.now(), coupen_to__gte = timezone.now())
-        total_price = total_price - coupon.coupen_discount
         all_total = all_total - coupon.coupen_discount
-        return render(request, 'checkout.html', {'total_price': total_price, 'all_total': all_total})
+        coupon_disc = coupon.coupen_discount
+        mssg = "Coupon Applied Successfully"
+        
+        return render(request, 'checkout.html', {'total_price': total_price, 'all_total': all_total, 'coupon_disc': coupon_disc, 'messages': mssg})
 
 def contact(request):
     return render(request,'contact.html')
