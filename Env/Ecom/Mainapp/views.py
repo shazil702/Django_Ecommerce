@@ -109,13 +109,14 @@ def checkout(request):
         })
         return render(request, 'checkout.html', { 'order_id': order['id'], 'razorpay_key': 'rzp_test_6gQ0trEdPai7zw'})
     
-    active_coupon = Coupon.objects.filter(active = True, coupen_from__lte = timezone.now(), coupen_to__gte = timezone.now())
+    active_coupon = Coupon.objects.filter(active = True, coupen_from__lte = timezone.now(), coupen_to__gte = timezone.now(), coupen_min_amount__lte = total_price)
    
     return render(request, 'checkout.html', {'total_price' : total_price, 'all_total': all_total, 'active_coupon': active_coupon})
 
 def apply_coupon(request):
     total_price = request.session.get('total_price', 0)
     all_total = request.session.get('all_total', 0)
+    
     if request.method == 'POST':
         code = request.POST['coupon_code']
         coupon = Coupon.objects.get(coupen_code=code, active = True, coupen_from__lte = timezone.now(), coupen_to__gte = timezone.now())
@@ -146,7 +147,7 @@ def login_page(request):
         user = authenticate(request,username=username,password=password)
         if user and user.is_superuser:
             login(request,user)
-            return redirect('adminpanel:admin_login')
+            return redirect('admin:index')
         if user is not None:
             login(request,user)
             return redirect('index')

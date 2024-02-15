@@ -21,7 +21,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('dj-admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('about/', views.about, name='about'),
     path('blog/', views.blog, name='blog'),
@@ -41,7 +41,7 @@ urlpatterns = [
     path('login/',(views.login_page), name='login'),
     path('register/',(views.register), name='register'),
     path('logout/', views.logout_page, name='logout'),
-    path('admin/', include('adminpanel.urls'),name='admin_panel'),
+    
 
     
 ]

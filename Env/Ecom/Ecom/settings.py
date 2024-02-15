@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -146,3 +147,23 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media/')
 
 RAZORPAY_KEY_ID = 'rzp_test_6gQ0trEdPai7zw',
 RAZORPAY_KEY_SECRET = '8BPqLZ2nzJMX3sobgMMic4W2'
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Mini Shop Admin",
+    "site_header": "Mini Shop",
+    "site_brand": "Mini Shop",
+    "site logo": "images/logo.jpg",
+    "login_logo": "images/logo.jpg",
+    "login_logo_dark": None,
+    "site_logo_classes": "img-circle",
+    "welcome_sign": "Welcome to Mini Shop",
+    "copyright": "Mini Shop Ltd",
+    "search_model": ["auth.User", "Mainapp.Product"],
+    "topmenu_links": [
+        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
+        
+        {"name": "User Page", "url": "index", "new_window": True},
+
+        
+    ],
+}
