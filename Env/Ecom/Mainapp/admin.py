@@ -10,6 +10,6 @@ admin.site.register(Cart_Product)
 
 admin.site.register(Category)
 
-admin.site.register(Coupon)
+admin.site.register(Prod_Coupon)
 
 admin.site.register(Adress)

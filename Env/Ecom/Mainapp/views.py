@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
 from . models import *
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse,HttpResponse
+from django.http import JsonResponse
 from Checkout.models import *
 import razorpay
 from django.views.decorators.cache import never_cache
@@ -81,7 +81,12 @@ def delete_cart(request, pk):
 def checkout(request):
     total_price = request.session.get('total_price', 0)
     all_total = request.session.get('all_total', 0)
+    user = request.user
+    adressess = Adress.objects.filter(adress_user=user)
     if request.method == 'POST':
+        if not all(request.POST.get(key) for key in ['firstname', 'lastname', 'state', 'streetaddress', 'area', 'city', 'phone', 'pincode']):
+            error_mssg = 'Please fill address fields.'
+            return render(request, 'checkout.html', {'error_mssg':error_mssg, 'total_price':total_price,'all_total':all_total })
         adress_name = request.POST['firstname']
         adress_lastname = request.POST['lastname']
         adress_state = request.POST['state']
@@ -90,7 +95,7 @@ def checkout(request):
         adress_city = request.POST['city']
         adress_phone = request.POST['phone']
         adress_pincode = request.POST['pincode']
-        adress_user = request.user
+        adress_user = user
         adress = Adress(adress_name=adress_name,adress_lastname=adress_lastname,adress_state=adress_state,adress_house=adress_house,adress_area=adress_area,adress_city=adress_city,adress_phone=adress_phone,adress_pincode=adress_pincode,adress_user=adress_user)
         adress.save()
 
@@ -108,23 +113,29 @@ def checkout(request):
            
         })
         return render(request, 'checkout.html', { 'order_id': order['id'], 'razorpay_key': 'rzp_test_6gQ0trEdPai7zw'})
-    
-    active_coupon = Coupon.objects.filter(active = True, coupen_from__lte = timezone.now(), coupen_to__gte = timezone.now(), coupen_min_amount__lte = total_price)
-   
-    return render(request, 'checkout.html', {'total_price' : total_price, 'all_total': all_total, 'active_coupon': active_coupon})
+    user_used = Prod_Coupon.objects.filter(user=user).exists()
+    if user_used:
+        return render(request, 'checkout.html', {'total_price' : total_price, 'all_total': all_total,  'adressess': adressess})
+    active_coupons = Prod_Coupon.objects.filter(active=True, coupon_from__lte=timezone.now(), coupon_to__gte=timezone.now(), coupon_min_amount__lte=total_price)
+    return render(request, 'checkout.html', {'active_coupon': active_coupons, 'total_price': total_price, 'all_total': all_total, 'adressess': adressess})
+def get_address(request,pk):
+    try:
+        adress = Adress.objects.get(adress_id=pk)
+        return JsonResponse({'adress_name': adress.adress_name, 'adress_lastname': adress.adress_lastname, 'adress_state': adress.adress_state, 'adress_house': adress.adress_house, 'adress_area': adress.adress_area, 'adress_city': adress.adress_city, 'adress_phone': adress.adress_phone, 'adress_pincode': adress.adress_pincode})
+    except Adress.DoesNotExist:
+        return JsonResponse({'error': 'Adress does not exist'}, status=404)
 
 def apply_coupon(request):
-    total_price = request.session.get('total_price', 0)
-    all_total = request.session.get('all_total', 0)
-    
+    total_price = request.session.get('total_price',0)
+    all_total = request.session.get('all_total',0)
+
     if request.method == 'POST':
         code = request.POST['coupon_code']
-        coupon = Coupon.objects.get(coupen_code=code, active = True, coupen_from__lte = timezone.now(), coupen_to__gte = timezone.now())
-        all_total = all_total - coupon.coupen_discount
-        coupon_disc = coupon.coupen_discount
-        mssg = "Coupon Applied Successfully"
-        
-        return render(request, 'checkout.html', {'total_price': total_price, 'all_total': all_total, 'coupon_disc': coupon_disc, 'messages': mssg})
+        coupon = Prod_Coupon.objects.get(coupon_code=code, active=True, coupon_from__lte = timezone.now(), coupon_to__gte = timezone.now())
+        all_total = all_total - coupon.coupon_discount
+        coupon_disc = coupon.coupon_discount
+        msg = "Coupon applied successfully"
+        return render(request, 'checkout.html', {'messages':msg, 'total_price':total_price,'all_total':all_total, 'coupon_disc':coupon_disc })
 
 def contact(request):
     return render(request,'contact.html')
@@ -181,6 +192,7 @@ def category(request,pk):
     get_product=Product.objects.filter(product_category=get_cat)
     return render(request, 'category.html',{'get_products':get_product, 'get_cat':get_cat})
 def search_price(request):
+    
     if request.method == 'POST':
        min_range = int(request.POST['from'])
        max_range = int(request.POST['to'])
@@ -192,4 +204,4 @@ def search_price(request):
            return render(request,'shop.html',{'error_message':error_message})
     error_message = 'No such product'
     return render(request,'shop.html',{'error_message':error_message})
-
+ 

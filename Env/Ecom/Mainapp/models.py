@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
 
 # Create your models here.
 class Category(models.Model):
@@ -8,15 +9,16 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-class Coupon(models.Model):
+class Prod_Coupon(models.Model):
     coupon_name = models.CharField(max_length=200)
-    coupen_code = models.CharField(max_length=200, unique=True)
-    coupen_discount = models.FloatField()
-    coupen_from = models.DateTimeField()
-    coupen_to = models.DateTimeField()
-    coupen_min_amount = models.FloatField(default=0.0)
-    coupen_maxuse = models.FloatField(default=0.0)
+    coupon_code = models.CharField(max_length=16, unique=True)
+    coupon_discount = models.FloatField()
+    coupon_from = models.DateTimeField()
+    coupon_to = models.DateTimeField()
+    coupon_min_amount = models.FloatField(default=1)
+    coupon_maxuse = models.FloatField(default=1)
     active = models.BooleanField()
+    user = models.ForeignKey(User, null=True, blank=True,  on_delete=models.SET_NULL)
     
     def __str__(self):
         return self.coupon_name

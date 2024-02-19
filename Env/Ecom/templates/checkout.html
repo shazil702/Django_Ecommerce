@@ -91,26 +91,40 @@
     </div>
 
     <section class="ftco-section">
+		<form action="">
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-xl-10 ftco-animate">
 		<div class="row">
 			<div class="col-md-8">
+				
 			
 						<form action="#" class="billing-form" method="post" enctype="multipart/form-data">
 							{% csrf_token %}
 							<h3 class="mb-4 billing-heading">Billing Details</h3>
 	          	<div class="row align-items-end">
 	          		<div class="col-md-8">
+						<form action="{% url 'checkout' %}" method="post" enctype="multipart/form-data">
+							{% csrf_token %}
+							<div class="form-group">
+								<label for="select_adress">Select Address:</label>
+								<select class="form-control" id="select_adress" name="select_adress">
+									<option value="">Select Address</option>
+                                    {% for adress in adressess %}
+                                    <option value="{{ adress.adress_id }}">{{ adress.adress_name }}</option>
+                                    {% endfor %}
+								</select>
+							</div>
+						</form>
 	                <div class="form-group">
 	                	<label for="firstname">Firt Name</label>
-	                  <input type="text" class="form-control" placeholder="John" name="firstname" required>
+	                  <input type="text" class="form-control address-field" placeholder="John" name="firstname" id="firstname" required >
 	                </div>
 	              </div>
 	              <div class="col-md-6">
 	                <div class="form-group">
 	                	<label for="lastname">Last Name</label>
-	                  <input type="text" class="form-control" placeholder="Wick" name="lastname"  required>
+	                  <input type="text" class="form-control address-field" placeholder="Wick" name="lastname" id="lastname" required >
 	                </div>
                 </div>
                 <div class="w-100"></div>
@@ -119,7 +133,7 @@
 		            		<label for="country">State / Country</label>
 		            		<div class="select-wrap">
 		                  <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-		                  <select  id="" class="form-control" name="state"  required >
+		                  <select  id="state" class="form-control address-field" name="state"  required >
 		                  	<option value="France">France</option>
 		                    <option value="Italy">Italy</option>
 		                    <option value="Philippines">Philippines</option>
@@ -134,32 +148,32 @@
 		            <div class="col-md-6">
 		            	<div class="form-group">
 	                	<label for="streetaddress">Street Address</label>
-	                  <input type="text" class="form-control" placeholder="House number and street name"  name="streetaddress" required>
+	                  <input type="text" class="form-control address-field" placeholder="House number and street name"  name="streetaddress" id="streetaddress" required>
 	                </div>
 		            </div>
 		            <div class="col-md-6">
 		            	<div class="form-group">
-	                  <input type="text" class="form-control" placeholder="Appartment, suite, unit etc: (optional)" name="area" required>
+	                  <input type="text" class="form-control address-field" placeholder="Appartment, suite, unit etc: (optional)" name="area" id="area" required>
 	                </div>
 		            </div>
 		            <div class="w-100"></div>
 		            <div class="col-md-6">
 		            	<div class="form-group">
 	                	<label for="towncity">Town / City</label>
-	                  <input type="text" class="form-control" placeholder=""  name="city"  required>
+	                  <input type="text" class="form-control address-field" placeholder=""  name="city" id="city" required>
 	                </div>
 		            </div>
 		            <div class="col-md-6">
 		            	<div class="form-group">
 		            		<label for="postcodezip">Postcode / ZIP *</label>
-	                  <input type="text" class="form-control" placeholder=""  name="pincode" required>
+	                  <input type="text" class="form-control address-field" placeholder=""  name="pincode" id="pincode" required>
 	                </div>
 		            </div>
 		            <div class="w-100"></div>
 		            <div class="col-md-6">
 	                <div class="form-group">
 	                	<label for="phone">Phone</label>
-	                  <input type="text" class="form-control" placeholder=""  name="phone" required>
+	                  <input type="text" class="form-control address-field" placeholder=""  name="phone" id="phone" required>
 	                </div>
 	              </div>
 	              <div class="col-md-6">
@@ -200,7 +214,7 @@
 			    <h5>Availabe Coupons For You</h5>
 				{% for coupon in active_coupon %}
 				    <ul>
-						<li>Enter {{ coupon.coupen_code }} for ₹{{ coupon.coupen_discount }} off</li>
+						<li>Enter <b>{{ coupon.coupon_code }}</b> for ₹{{ coupon.coupon_discount }} off</li>
 					</ul>
 					{% endfor %}
 					{% endif %}
@@ -273,6 +287,9 @@
 									<!-- <p><a href="#"class="btn btn-primary py-3 px-4">Place an order</a></p> -->
 									
 									<button type="submit" id="rzp-button" class="btn btn-primary py-3 px-5">place an order</button>
+									{% if error_mssg %}
+									<p>{{ error_mssg }}</p>
+									{% endif %}
 									
 								</div>
 	          	</div>
@@ -282,7 +299,7 @@
       </div>
 	  
 
-	 
+	</form>
     </section> <!-- .section -->
 		
 
@@ -351,10 +368,10 @@
         <div class="row">
           <div class="col-md-12 text-center">
 
-            <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            <!-- <p>Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0.
 						  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart color-danger" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-						  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-						</p>
+						  Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0.
+						</p> -->
           </div>
         </div>
       </div>
@@ -394,11 +411,11 @@
             "description": "Donation",
             "image": "https://colorlib.com/polygon/adventure/img/logo.png",
 			"order_id": "{{ order_id|default:'' }}",
-			"handler": function (response){
-				alert(response.razorpay_payment_id);
-				alert(response.razorpay_order_id);
-				alert(response.razorpay_signature);
-			},
+			// "handler": function (response){
+			// 	alert(response.razorpay_payment_id);
+			// 	alert(response.razorpay_order_id);
+			// 	alert(response.razorpay_signature);
+			// },
 			"prefill": {
         "name": "Gaurav Kumar",
         "email": "gaurav.kumar@example.com",
@@ -412,10 +429,49 @@
 		var rzp = new Razorpay(option);
 			document.getElementById('rzp-button').addEventListener('click', function(e){
 				e.preventDefault();
-				rzp.open();
+				var adres_fld = document.getElementsByClassName('address-field');
+				var fld_filled = true;
+				for (var i = 0; i < adres_fld.length; i++) {
+                    if (adres_fld[i].value == '') {
+                        fld_filled = false;
+						break;
+                    }
+                }
+				if(fld_filled){
+					rzp.open();
+				}
+				else{
+                    alert('Please fill all the fields');
+                }
+				
 
 	})
 			})
+
+$(document).ready(function(){
+	$('#select_adress').change(function(){
+		var pk = $(this).val();
+		$.ajax({
+			url: '/get_address/' + pk + '/',
+			type: 'GET',
+            dataType: 'json',
+            success: function(data){
+				$('#firstname').val(data.adress_name);
+				$('#lastname').val(data.adress_lastname);
+				$('#state').val(data.adress_state);
+				$('#streetaddress').val(data.adress_house);
+				$('#area').val(data.adress_area);
+				$('#city').val(data.adress_city);
+				$('#pincode').val(data.adress_pincode);
+				$('#phone').val(data.adress_phone);
+
+	},
+	error: function(data){
+        alert('adress failed to load');
+    }
+	});
+});
+});
 
 	</script>
     
