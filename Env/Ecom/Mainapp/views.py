@@ -10,14 +10,18 @@ from Checkout.models import *
 import razorpay
 from django.views.decorators.cache import never_cache
 from django.utils import timezone
+from django.views.generic import ListView
+from django.core.paginator import Paginator
 
 # Create your views here.
 def about(request):
     return render(request, 'about.html')
 
-def shop(request):
-    get_product= Product.objects.all()
-    return render(request,'shop.html',{'get_products':get_product})
+class Shop(ListView):
+    model=Product
+    template_name='shop.html'
+    context_object_name = 'get_products'
+    paginate_by=6
 
 def search(request):
     if request.method == 'POST':
