@@ -84,7 +84,7 @@
         <div class="row no-gutters slider-text align-items-center justify-content-center">
           <div class="col-md-9 ftco-animate text-center">
           	<p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home</a></span> <span>Cart</span></p>
-            <h1 class="mb-0 bread">My Wishlist</h1>
+            <h1 class="mb-0 bread">Cart</h1>
           </div>
         </div>
       </div>
@@ -111,7 +111,7 @@
 							
 						    <tbody id="product-row-{{ item.product_id }}">
 						      <tr class="text-center">
-						        <td class="product-remove"><a href="{% url 'delete_cart' item.product_id %}"><span class="ion-ios-close"></span></a></td>
+						        <td class="product-remove" id="product-delete{{ item.product_id }}" data-product-id="{{ item.product_id}}"><a href="{% url 'delete_cart' item.product_id %}"><span class="ion-ios-close"></span></a></td>
 						        
 						        <td class="image-prod"><div class="img" style="background-image:url('{{ item.product.product_image.url }}');"></div></td>
 						        
@@ -280,41 +280,7 @@
 
 
   <script>
-		// $(document).ready(function(){
-
-		// var quantity=0;
-		//    $('.quantity-right-plus').click(function(e){
-		        
-		//         // Stop acting like a button
-		//         e.preventDefault();
-		//         // Get the field name
-		//         var quantity = parseInt($('#quantity').val());
-		        
-		//         // If is not undefined
-		            
-		//             $('#quantity').val(quantity + 1);
-
-		          
-		//             // Increment
-		        
-		//     });
-
-		//      $('.quantity-left-minus').click(function(e){
-		//         // Stop acting like a button
-		//         e.preventDefault();
-		//         // Get the field name
-		//         var quantity = parseInt($('#quantity').val());
-		        
-		//         // If is not undefined
-		      
-		//             // Increment
-		//             if(quantity>0){
-		//             $('#quantity').val(quantity - 1);
-		//             }
-		//     });
-		    
-		// });
-
+		
 		$(document).ready(function(){
 			$('.btn-number').click(function(e){
 				e.preventDefault();
@@ -357,14 +323,15 @@
 					success: function(response) {
 						console.log(response);
 						var decreaseQuantity =response.quantity;
+						if (decreaseQuantity < 1) {
+            decreaseQuantity = 1;
+        }
 						input.val(decreaseQuantity);
 						$('#quantity-display-' + productId).val(decreaseQuantity);
 						var newtotal = response.product_price * decreaseQuantity;
 						totalvalue.text('₹' + newtotal);
 						updateTotal();
-						if(decreaseQuantity == 0){
-                            $('#product-row-' + productId).remove();
-                        }
+						
 						
 					},
 					error: function(error) {
@@ -385,7 +352,32 @@
 				$('#all-total').text('₹' + alltotal);
             }
 
-			
+			$(document).ready(function(){
+    
+    $('.product-remove').click(function(e){
+        e.preventDefault(); 
+        
+        var productId = $(this).data('product-id'); 
+        
+        $.ajax({
+            url: '/delete_cart/' + productId + '/',
+            method: 'GET',
+            success: function(response) {
+                console.log(productId);
+				$('#product-row-'+productId).remove();
+                
+                $('#total-' + productId).closest('.cart-list').remove();
+                
+                updateTotal();  
+            },
+            error: function(error) {
+                console.log(error); 
+            }
+        });
+    });
+});
+
+
 	</script>
     
   </body>

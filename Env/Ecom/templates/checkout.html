@@ -184,12 +184,7 @@
                 </div>
                 <div class="w-100"></div>
                 <div class="col-md-12">
-                	<div class="form-group mt-4">
-										<div class="radio">
-										  <label class="mr-3"><input type="radio" name="optradio"> Create an Account? </label>
-										  <label><input type="radio" name="optradio"> Ship to different address</label>
-										</div>
-									</div>
+                	
                 </div>
 	            </div>
 	          <!-- END -->
@@ -233,7 +228,7 @@
 	          			<h3 class="billing-heading mb-4">Cart Total</h3>
 	          			<p class="d-flex">
 		    						<span>Subtotal</span>
-		    						<span>₹{{ total_price }}</span>
+		    						<span id="subtotal">₹{{ total_price }}</span>
 		    					</p>
 								{% if coupon_disc %}
                                 <p class="d-flex">
@@ -249,7 +244,7 @@
 		    					<hr>
 		    					<p class="d-flex total-price">
 		    						<span>Total</span>
-		    						<span>{{ all_total }}</span>
+		    						<span id="all-total">{{ all_total }}</span>
 		    					</p>
 								</div>
 	          	</div>
@@ -472,6 +467,33 @@ $(document).ready(function(){
 	});
 });
 });
+
+$(document).ready(function(){
+	function updateTotal(){
+		$.ajax({
+			url: '/total_price/',
+			method: 'GET',
+			success: function(response){
+				$('#subtotal').text('₹'+response.total_price);
+				$("#all-total").text('₹'+response.all_total);
+			},
+			error: function(error){
+				console.log(error);
+			}
+		});
+	}
+	updateTotal();
+
+    
+    $(window).on('pageshow', function(event) {
+        if (event.originalEvent.persisted) {
+            updateTotal();
+        }
+    });
+
+    
+});
+
 
 	</script>
     

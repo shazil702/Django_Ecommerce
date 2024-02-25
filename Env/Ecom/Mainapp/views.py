@@ -43,10 +43,30 @@ def cart(request):
 
     return render(request, 'cart.html', {'items': items, 'total_price':total_price, 'all_total':all_total})
 
+def get_total_price(request):
+    items= Cart_Product.objects.filter(user=request.user)
+    total_price= sum((item.product.product_price * item.quantity ) for item in items)
+    all_total = total_price+60
+
+    request.session['total_price']= total_price
+    request.session['all_total']= all_total
+    return JsonResponse({'total_price':total_price, 'all_total':all_total})
+
 @login_required(login_url='login')
 def add_cart(request, pk):
     product=Product.objects.get(product_id=pk)
     user=request.user
+    if request.method == 'POST':
+        size = request.POST['size']
+        quantity = int(request.POST.get('quantity'))
+        if Cart_Product.objects.filter(user=user,product=product).exists():
+            item=Cart_Product.objects.get(user=user,product=product)
+            item.quantity += quantity
+            item.size = size
+            item.save()
+        else:
+            Cart_Product.objects.create(user=user,product=product,quantity=quantity,size=size)
+        return redirect('cart')   
     if Cart_Product.objects.filter(user=user,product=product).exists():
         item=Cart_Product.objects.get(user=user,product=product)
         item.quantity+=1
@@ -62,8 +82,10 @@ def remove_cart(request, pk):
         item=Cart_Product.objects.get(user=user,product=product)
         item.quantity-=1
         item.save()
-        if item.quantity==0:
-            item.delete()
+        if item.quantity < 1:
+            item.quantity = 1
+            item.save()
+
     return JsonResponse({'quantity': item.quantity, 'product_price':item.product.product_price})
 
 def add_cart_quantity(request, pk):
@@ -77,9 +99,12 @@ def add_cart_quantity(request, pk):
 def delete_cart(request, pk):
     product=Product.objects.get(product_id=pk)
     user=request.user
-    item=Cart_Product.objects.get(user=user,product=product)
-    item.delete()
-    return redirect('cart')
+    response ={'success': False}
+    if Cart_Product.objects.filter(user=user,product=product).exists():
+        item=Cart_Product.objects.get(user=user,product=product)
+        item.delete()
+        response['success']=True
+    return JsonResponse(response)
 
 @login_required(login_url='login')
 def checkout(request):
@@ -145,7 +170,7 @@ def contact(request):
     return render(request,'contact.html')
 
 def index(request):
-    get_product= Product.objects.all()
+    get_product= Product.objects.all().order_by('-product_id')[:4]
     return render(request, 'index.html',{'get_products':get_product})
 
 def product_single(request,pk):

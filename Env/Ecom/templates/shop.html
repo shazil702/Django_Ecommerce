@@ -137,6 +137,7 @@
 		               {% if page_obj.has_previous %}
 					   <li><a href="?page={{ page_obj.previous_page_number }}">{{  page_obj.previous_page_number }}</a></li>
 					   {% endif %}
+					   <li class="active"><a href="#">{{ page_obj.number }}</a></li>
 					   {% if page_obj.has_next %}
 		                 <li><a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a></li>
 						 {% endif %}
@@ -197,7 +198,7 @@
 		                      <input name="to" id="people" class="form-control">
 		                    </div>
 						</div>
-						<button type="submit" id="serach_price_btn"> Search</button>
+						<button type="submit" id="serach_price_btn" class="btn btn-dark py-3 px-5"> Search</button>
 					</div>
 		              </div>
 		            </form>

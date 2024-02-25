@@ -12,4 +12,6 @@ admin.site.register(Category)
 
 admin.site.register(Prod_Coupon)
 
+admin.site.register(Size)
+
 admin.site.register(Adress)

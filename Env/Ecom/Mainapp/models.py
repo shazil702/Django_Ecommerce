@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-import uuid
+from Checkout.models import Adress
+
 
 # Create your models here.
 class Category(models.Model):
@@ -22,6 +23,13 @@ class Prod_Coupon(models.Model):
     
     def __str__(self):
         return self.coupon_name
+    
+class Size(models.Model):
+    size = models.IntegerField()
+    
+    def __str__(self):
+        return str(self.size)
+    
 class Product(models.Model):
     LIVE=1
     DELETE=0
@@ -34,17 +42,30 @@ class Product(models.Model):
     product_price = models.FloatField()
     product_description = models.TextField()
     product_image = models.ImageField(upload_to='product_images')
+    product_size = models.ManyToManyField(Size, verbose_name="Product Sizes")
+    stock = models.PositiveIntegerField(default=1)
     product_category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
     product_status = models.IntegerField(choices=STATUS_CHOICES,default=LIVE)
     
     def __str__(self):
         return self.product_name
+    
+
 
 class Cart_Product(models.Model):
     product=models.ForeignKey(Product, on_delete=models.CASCADE)
     user=models.ForeignKey(User, on_delete=models.CASCADE)
     quantity=models.IntegerField(default=1)
+    size=models.IntegerField(default=5)
     date=models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.product.product_name
+    
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order_id = models.CharField(max_length=30)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    address = models.ForeignKey(Adress, on_delete=models.CASCADE)
+    amount = models.FloatField(default=1)
+    payment_status = models.BooleanField()
