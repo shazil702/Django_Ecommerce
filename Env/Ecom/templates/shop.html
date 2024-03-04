@@ -70,7 +70,7 @@
             </li>
 	          <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">About</a></li>
 	          <li class="nav-item"><a href="{% url 'blog' %}" class="nav-link">Blog</a></li>
-	          <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+	          
 	          <li class="nav-item cta cta-colored"><a href="{% url 'cart' %}" class="nav-link"><span class="icon-shopping_cart"></span>[0]</a></li>
 
 	        </ul>
@@ -185,7 +185,7 @@
 		                    <label for="guests">Price from:</label>
 		                    <div class="form-field">
 		                      <i class="icon icon-arrow-down3"></i>
-		                      <input name="from" id="people" class="form-control">
+		                      <input name="from" id="people" class="form-control" required>
 		                        
 		                    </div>
 		                  </div>
@@ -195,7 +195,7 @@
 		                    <label for="guests">Price to:</label>
 		                    <div class="form-field">
 		                      <i class="icon icon-arrow-down3"></i>
-		                      <input name="to" id="people" class="form-control">
+		                      <input name="to" id="people" class="form-control" required> 
 		                    </div>
 						</div>
 						<button type="submit" id="serach_price_btn" class="btn btn-dark py-3 px-5"> Search</button>

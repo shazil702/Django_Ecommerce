@@ -17,3 +17,5 @@ class Adress(models.Model):
     def __str__(self):
         return self.adress_name + " " + self.adress_lastname
     
+    class Meta:
+        unique_together = ('adress_phone', 'adress_pincode', 'adress_user')

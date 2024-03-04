@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from Mainapp import views
-from Mainapp.views import Shop
+from Mainapp.views import Shop,Success
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -37,10 +37,11 @@ urlpatterns = [
     path('remove_cart/<int:pk>/',views.remove_cart,name='remove_cart'),
     path('add_cart_quantity/<int:pk>/',views.add_cart_quantity,name='add_cart_quantity'),
     path('delete_cart/<int:pk>/',views.delete_cart, name='delete_cart'),
+    path('address/', views.address, name='address'),
     path('checkout/', views.checkout, name='checkout'),
     path('get_address/<int:pk>/', views.get_address, name='get_address'),
     path('apply_coupon/', views.apply_coupon, name='apply_coupon'),
-    path('contact/', views.contact, name='contact'),
+    path('success/', Success.as_view(), name='success'),
     path('login/',(views.login_page), name='login'),
     path('register/',(views.register), name='register'),
     path('logout/', views.logout_page, name='logout'),

@@ -6,16 +6,20 @@ from django.contrib.auth import authenticate,login,logout
 from . models import *
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from Checkout.models import *
+from Checkout.models import Adress
 import razorpay
 from django.views.decorators.cache import never_cache
 from django.utils import timezone
 from django.views.generic import ListView
 from django.core.paginator import Paginator
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.views import View
 
 # Create your views here.
 def about(request):
     return render(request, 'about.html')
+
 
 class Shop(ListView):
     model=Product
@@ -23,34 +27,40 @@ class Shop(ListView):
     context_object_name = 'get_products'
     paginate_by=6
 
+
+
 def search(request):
     if request.method == 'POST':
         query = request.POST['search_product']
         get_product = Product.objects.filter(product_name__icontains=query)
         return render(request, 'search.html',{'get_products':get_product})
 
+
+
 def blog(request):
     return render(request, 'blog.html')
+
+
 
 @login_required(login_url='login')                                                                                                                                                                                                                                                                                                                                                                                                                              
 def cart(request):
     items= Cart_Product.objects.filter(user=request.user)
     total_price= sum((item.product.product_price * item.quantity ) for item in items)
     all_total = total_price+60
-
     request.session['total_price']= total_price
     request.session['all_total']= all_total
-
     return render(request, 'cart.html', {'items': items, 'total_price':total_price, 'all_total':all_total})
+
 
 def get_total_price(request):
     items= Cart_Product.objects.filter(user=request.user)
     total_price= sum((item.product.product_price * item.quantity ) for item in items)
     all_total = total_price+60
-
     request.session['total_price']= total_price
     request.session['all_total']= all_total
     return JsonResponse({'total_price':total_price, 'all_total':all_total})
+
+
 
 @login_required(login_url='login')
 def add_cart(request, pk):
@@ -75,6 +85,8 @@ def add_cart(request, pk):
         Cart_Product.objects.create(user=user,product=product,quantity=1)
     return redirect('cart')
 
+
+
 def remove_cart(request, pk):
     product=Product.objects.get(product_id=pk)
     user=request.user
@@ -85,8 +97,9 @@ def remove_cart(request, pk):
         if item.quantity < 1:
             item.quantity = 1
             item.save()
-
     return JsonResponse({'quantity': item.quantity, 'product_price':item.product.product_price})
+
+
 
 def add_cart_quantity(request, pk):
     product=Product.objects.get(product_id=pk)
@@ -96,6 +109,9 @@ def add_cart_quantity(request, pk):
         item.quantity+=1
         item.save()
     return JsonResponse({'quantity': item.quantity, 'product_price':item.product.product_price})
+
+
+
 def delete_cart(request, pk):
     product=Product.objects.get(product_id=pk)
     user=request.user
@@ -106,17 +122,13 @@ def delete_cart(request, pk):
         response['success']=True
     return JsonResponse(response)
 
-@login_required(login_url='login')
-def checkout(request):
-    total_price = request.session.get('total_price', 0)
-    all_total = request.session.get('all_total', 0)
+
+def address(request):
     user = request.user
     adressess = Adress.objects.filter(adress_user=user)
     if request.method == 'POST':
-        if not all(request.POST.get(key) for key in ['firstname', 'lastname', 'state', 'streetaddress', 'area', 'city', 'phone', 'pincode']):
-            error_mssg = 'Please fill address fields.'
-            return render(request, 'checkout.html', {'error_mssg':error_mssg, 'total_price':total_price,'all_total':all_total })
         adress_name = request.POST['firstname']
+        
         adress_lastname = request.POST['lastname']
         adress_state = request.POST['state']
         adress_house = request.POST['streetaddress']
@@ -125,11 +137,21 @@ def checkout(request):
         adress_phone = request.POST['phone']
         adress_pincode = request.POST['pincode']
         adress_user = user
-        adress = Adress(adress_name=adress_name,adress_lastname=adress_lastname,adress_state=adress_state,adress_house=adress_house,adress_area=adress_area,adress_city=adress_city,adress_phone=adress_phone,adress_pincode=adress_pincode,adress_user=adress_user)
-        adress.save()
+        adress, created = Adress.objects.get_or_create(adress_name=adress_name,adress_lastname=adress_lastname,adress_state=adress_state,adress_house=adress_house,adress_area=adress_area,adress_city=adress_city,adress_phone=adress_phone,adress_pincode=adress_pincode,adress_user=adress_user)
+        if created:
+            adress.save()
+        return redirect('checkout')
+    return render(request, 'address.html', {'adressess':adressess})
+    
 
-        
-        
+@login_required(login_url='login')
+def checkout(request):
+    total_price = request.session.get('total_price', 0)
+    all_total = request.session.get('all_total', 0)
+    user = request.user
+    items= Cart_Product.objects.filter(user=user)
+    adressess = Adress.objects.filter(adress_user=user)
+    if request.method == 'POST':    
         client = razorpay.Client(auth=("rzp_test_6gQ0trEdPai7zw", "8BPqLZ2nzJMX3sobgMMic4W2"))
         order_amount = int(all_total*100)
         order_currency = 'INR'
@@ -141,12 +163,15 @@ def checkout(request):
             "payment_capture": 1,
            
         })
+        
         return render(request, 'checkout.html', { 'order_id': order['id'], 'razorpay_key': 'rzp_test_6gQ0trEdPai7zw'})
     user_used = Prod_Coupon.objects.filter(user=user).exists()
     if user_used:
         return render(request, 'checkout.html', {'total_price' : total_price, 'all_total': all_total,  'adressess': adressess})
     active_coupons = Prod_Coupon.objects.filter(active=True, coupon_from__lte=timezone.now(), coupon_to__gte=timezone.now(), coupon_min_amount__lte=total_price)
-    return render(request, 'checkout.html', {'active_coupon': active_coupons, 'total_price': total_price, 'all_total': all_total, 'adressess': adressess})
+    return render(request, 'checkout.html', {'active_coupon': active_coupons, 'total_price': total_price, 'all_total': all_total, 'adressess': adressess, 'items':items})
+
+
 def get_address(request,pk):
     try:
         adress = Adress.objects.get(adress_id=pk)
@@ -154,24 +179,63 @@ def get_address(request,pk):
     except Adress.DoesNotExist:
         return JsonResponse({'error': 'Adress does not exist'}, status=404)
 
+
+
 def apply_coupon(request):
     total_price = request.session.get('total_price',0)
     all_total = request.session.get('all_total',0)
-
+    items= Cart_Product.objects.filter(user=request.user)
     if request.method == 'POST':
         code = request.POST['coupon_code']
         coupon = Prod_Coupon.objects.get(coupon_code=code, active=True, coupon_from__lte = timezone.now(), coupon_to__gte = timezone.now())
         all_total = all_total - coupon.coupon_discount
         coupon_disc = coupon.coupon_discount
         msg = "Coupon applied successfully"
-        return render(request, 'checkout.html', {'messages':msg, 'total_price':total_price,'all_total':all_total, 'coupon_disc':coupon_disc })
+        return render(request, 'checkout.html', {'messages':msg, 'total_price':total_price,'all_total':all_total, 'coupon_disc':coupon_disc, 'items':items })
+    
 
-def contact(request):
-    return render(request,'contact.html')
+@method_decorator(csrf_exempt, name='dispatch')
+class Success(View):
+    model=Product
+    template_name='success.html'
+    
+    def order(self, request):
+        all_total = request.session.get('all_total',0)
+        adress = request.session.get('adress',0)
+        print(adress)
+        
+        user = request.user
+        try:
+            
+            address_instance = Adress.objects.get(adress_id=adress)
+            order = Order.objects.create(
+                user=user,
+                amount = all_total,
+                payment_status=True,
+                address=address_instance
+                
+            )
+            
+            for cart_item in Cart_Product.objects.filter(user=user):
+                prod_instance = cart_item.get_product_instance()
+                order.product.add(prod_instance)
+            order.save()
+            return redirect('success')
+        except (Product.DoesNotExist, Adress.DoesNotExist)as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    def get(self, request):
+        self.order(request)
+        return render(request, self.template_name)
+    def post(self, request):
+        self.order(request)
+        return redirect('success')
+    
 
 def index(request):
     get_product= Product.objects.all().order_by('-product_id')[:4]
     return render(request, 'index.html',{'get_products':get_product})
+
+
 
 def product_single(request,pk):
     get_product=Product.objects.filter(product_id=pk)
@@ -179,7 +243,6 @@ def product_single(request,pk):
     
 @never_cache
 def login_page(request):
-    
     error_message= None
     if request.method == 'POST':
         username = request.POST['username']

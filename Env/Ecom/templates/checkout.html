@@ -70,7 +70,7 @@
             </li>
 	          <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">About</a></li>
 	          <li class="nav-item"><a href="{% url 'blog' %}" class="nav-link">Blog</a></li>
-	          <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+	          
 	          <li class="nav-item cta cta-colored"><a href="{% url 'cart' %}" class="nav-link"><span class="icon-shopping_cart"></span>[0]</a></li>
 
 	        </ul>
@@ -91,15 +91,15 @@
     </div>
 
     <section class="ftco-section">
-		<form action="">
+		
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-xl-10 ftco-animate">
 		<div class="row">
-			<div class="col-md-8">
+			<!-- <div class="col-md-8">
 				
 			
-						<form action="#" class="billing-form" method="post" enctype="multipart/form-data">
+						<form action="{% url 'checkout' %}" class="billing-form" id="billing-form" method="post" enctype="multipart/form-data">
 							{% csrf_token %}
 							<h3 class="mb-4 billing-heading">Billing Details</h3>
 	          	<div class="row align-items-end">
@@ -184,14 +184,57 @@
                 </div>
                 <div class="w-100"></div>
                 <div class="col-md-12">
-                	
+                	<div class="form-group mt-4">
+						<div class="radio">
+						  <label class="mr-3"><input type="checkbox" name="checkaddress" id="check-adrs"> Confirm Address </label>
+						  
+						</div>
+					</div>
                 </div>
 	            </div>
-	          <!-- END -->
 			</form>
-	  </div>
-
-	  <div class="col-md-3">
+	          
+	  </div> -->
+	  <div class="col-md-7 ftco-animate">
+		<div class="cart-list">
+			<table class="table">
+				<thead class="thead-primary">
+				  <tr class="text-center">
+					
+					<th>&nbsp;</th>
+					<th>Product</th>
+					<th>Price</th>
+					<th>Quantity</th>
+					<th>Total</th>
+				  </tr>
+				</thead>
+				{% for item in items %}
+				
+				<tbody id="product-row-{{ item.product_id }}">
+				  <tr class="text-center">
+					
+					
+					<td class="image-prod"><div class="img" style="background-image:url('{{ item.product.product_image.url }}');"></div></td>
+					
+					<td class="product-name">
+						<h3>{{ item.product.product_name }}</h3>
+					</td>
+					
+					<td class="price">₹{{ item.product.product_price }}</td>
+					
+					<td class="quantity">
+						{{ item.quantity }}
+				  </td>
+					
+				  <td class="total" id="total-{{ item.product_id }}">₹{% widthratio item.product.product_price 1 item.quantity %}</td>
+				</tr><!-- END TR-->
+				
+			</tbody>
+			{% endfor %}
+			  </table>
+		  </div>
+	</div>
+	  <div class="col-md-5">
 		
 			<div class="coupon" id="coupon-div">
 			<form action="{% url 'apply_coupon' %}" method="post" enctype="multipart/form-data">
@@ -204,6 +247,7 @@
 				<button type="submit" class="btn btn-primary py-3 px-5">Apply Coupon</button>
 			
 			</form>
+			<br>
 			<br>
 			{% if active_coupon %}
 			    <h5>Availabe Coupons For You</h5>
@@ -251,37 +295,33 @@
 	          	<div class="col-md-6">
 	          		<div class="cart-detail bg-light p-3 p-md-4">
 	          			<h3 class="billing-heading mb-4">Payment Method</h3>
+								
 									<div class="form-group">
 										<div class="col-md-12">
 											<div class="radio">
-											   <label><input type="radio" name="optradio" class="mr-2"> Direct Bank Tranfer</label>
+											   <label><input type="radio" name="optradio" class="mr-2"> Razorpay</label>
 											</div>
 										</div>
 									</div>
 									<div class="form-group">
 										<div class="col-md-12">
 											<div class="radio">
-											   <label><input type="radio" name="optradio" class="mr-2"> Check Payment</label>
-											</div>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-md-12">
-											<div class="radio">
-											   <label><input type="radio" name="optradio" class="mr-2"> Paypal</label>
+											   <label><input type="radio" name="optradio" class="mr-2"> Cash On Delivery</label>
 											</div>
 										</div>
 									</div>
 									<div class="form-group">
 										<div class="col-md-12">
 											<div class="checkbox">
-											   <label><input type="checkbox" value="" class="mr-2"> I have read and accept the terms and conditions</label>
+											   <label><input type="checkbox" value="" class="mr-2" required> I have read and accept the terms and conditions</label>
 											</div>
 										</div>
 									</div>
 									<!-- <p><a href="#"class="btn btn-primary py-3 px-4">Place an order</a></p> -->
-									
+									<form action="" method="post" enctype="multipart/form-data">
+										{% csrf_token %}
 									<button type="submit" id="rzp-button" class="btn btn-primary py-3 px-5">place an order</button>
+								</form>
 									{% if error_mssg %}
 									<p>{{ error_mssg }}</p>
 									{% endif %}
@@ -294,7 +334,7 @@
       </div>
 	  
 
-	</form>
+	
     </section> <!-- .section -->
 		
 
@@ -363,10 +403,7 @@
         <div class="row">
           <div class="col-md-12 text-center">
 
-            <!-- <p>Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0.
-						  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart color-danger" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-						  Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0.
-						</p> -->
+        
           </div>
         </div>
       </div>
@@ -398,19 +435,26 @@
 
   <script>
 	document.addEventListener('DOMContentLoaded', function(){
+		var check =document.getElementById('check-adrs');
+		check.addEventListener('change', function(){
+			if(this.checked){
+				document.getElementById('billing-form').submit();
+			}
+		});
+	});
+	
+	document.addEventListener('DOMContentLoaded', function(){
 		var option = {
 			"key": "rzp_test_6gQ0trEdPai7zw",
 			"amount": "{% widthratio all_total 1 100 %}",
             "currency": "INR",
-            "name": "AL MaHa",
+            "name": "Mini Shop",
             "description": "Donation",
             "image": "https://colorlib.com/polygon/adventure/img/logo.png",
 			"order_id": "{{ order_id|default:'' }}",
-			// "handler": function (response){
-			// 	alert(response.razorpay_payment_id);
-			// 	alert(response.razorpay_order_id);
-			// 	alert(response.razorpay_signature);
-			// },
+			"handler": function (response){
+				window.location.href='/success';
+			},
 			"prefill": {
         "name": "Gaurav Kumar",
         "email": "gaurav.kumar@example.com",
@@ -499,3 +543,10 @@ $(document).ready(function(){
     
   </body>
 </html>
+
+
+
+
+
+
+

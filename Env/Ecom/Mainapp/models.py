@@ -62,10 +62,13 @@ class Cart_Product(models.Model):
     def __str__(self):
         return self.product.product_name
     
+    def get_product_instance(self):
+        return self.product
+    
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     order_id = models.CharField(max_length=30)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    address = models.ForeignKey(Adress, on_delete=models.CASCADE)
+    product = models.ManyToManyField(Product)
+    address = models.ForeignKey(Adress, on_delete=models.CASCADE, null=True, blank=True)
     amount = models.FloatField(default=1)
     payment_status = models.BooleanField()
