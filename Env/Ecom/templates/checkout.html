@@ -435,15 +435,6 @@
 
   <script>
 	document.addEventListener('DOMContentLoaded', function(){
-		var check =document.getElementById('check-adrs');
-		check.addEventListener('change', function(){
-			if(this.checked){
-				document.getElementById('billing-form').submit();
-			}
-		});
-	});
-	
-	document.addEventListener('DOMContentLoaded', function(){
 		var option = {
 			"key": "rzp_test_6gQ0trEdPai7zw",
 			"amount": "{% widthratio all_total 1 100 %}",
@@ -453,7 +444,11 @@
             "image": "https://colorlib.com/polygon/adventure/img/logo.png",
 			"order_id": "{{ order_id|default:'' }}",
 			"handler": function (response){
-				window.location.href='/success';
+				var form = document.createElement('form');
+				form.method = 'POST';
+				form.action = '/success/';
+				document.body.appendChild(form);
+				form.submit();
 			},
 			"prefill": {
         "name": "Gaurav Kumar",

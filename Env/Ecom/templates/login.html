@@ -29,15 +29,17 @@ body{
 </head>
 <body>
     <div class="container login" id="a" >
-        <form method="post" enctype="multipart/form-data">
+        <form action="{% url 'login' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <!-- {{ form.as_p }} -->
         <h1>Login</h1> 
         <div class="inp">
-            <input type="text" placeholder="Username" name="username" required>
+            <label for="email">Email</label>
+            <input type="email" placeholder="your@example.com" name="email" required>
             <i class='bx bxs-user'></i>
         </div>
         <div class="inp">
+            <label for="password">Password</label>
             <input type="password" placeholder="Password" name="password" required>
             <i class='bx bx-lock'></i>
 

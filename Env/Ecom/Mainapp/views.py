@@ -15,6 +15,9 @@ from django.core.paginator import Paginator
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
+from django.core.mail import send_mail
+import random
+from django.conf import settings
 
 # Create your views here.
 def about(request):
@@ -38,7 +41,9 @@ def search(request):
 
 
 def blog(request):
-    return render(request, 'blog.html')
+    user = request.user
+    orders = Order.objects.filter(user=user)
+    return render(request, 'blog.html', {'orders':orders})
 
 
 
@@ -140,6 +145,7 @@ def address(request):
         adress, created = Adress.objects.get_or_create(adress_name=adress_name,adress_lastname=adress_lastname,adress_state=adress_state,adress_house=adress_house,adress_area=adress_area,adress_city=adress_city,adress_phone=adress_phone,adress_pincode=adress_pincode,adress_user=adress_user)
         if created:
             adress.save()
+        request.session['address_id']=adress.adress_id
         return redirect('checkout')
     return render(request, 'address.html', {'adressess':adressess})
     
@@ -201,9 +207,7 @@ class Success(View):
     
     def order(self, request):
         all_total = request.session.get('all_total',0)
-        adress = request.session.get('adress',0)
-        print(adress)
-        
+        adress = request.session.get('address_id',0)
         user = request.user
         try:
             
@@ -224,7 +228,6 @@ class Success(View):
         except (Product.DoesNotExist, Adress.DoesNotExist)as e:
             return JsonResponse({'error': str(e)}, status=400)
     def get(self, request):
-        self.order(request)
         return render(request, self.template_name)
     def post(self, request):
         self.order(request)
@@ -245,12 +248,12 @@ def product_single(request,pk):
 def login_page(request):
     error_message= None
     if request.method == 'POST':
-        username = request.POST['username']
+        email = request.POST['email']
         password = request.POST['password']
-        user = authenticate(request,username=username,password=password)
-        if user and user.is_superuser:
-            login(request,user)
-            return redirect('admin:index')
+        user = authenticate(request,email=email,password=password)
+        # if user and user.is_superuser:
+        #     login(request,user)
+        #     return redirect('admin:index')
         if user is not None:
             login(request,user)
             return redirect('index')
@@ -258,7 +261,18 @@ def login_page(request):
         else:
             error_message = "Invalid Details"
     return render(request, 'login.html',{'error_message':error_message})
+def create_otp():
+    digits = '0123456789'
+    return ''.join(random.choices(digits, k=6))
 
+def send_otp(request):
+    otp = create_otp()
+    request.session['otp']=otp
+    email = request.POST['Email']
+    subject = 'Your otp'
+    message = 'your otp is ' + otp
+    from_email = settings.EMAIL_HOST_USER
+    send_mail(subject, message, from_email, [email])
 
 def register(request):
      if request.method == 'POST':
@@ -266,14 +280,42 @@ def register(request):
         username = request.POST['username']
         Email = request.POST['Email']
         password = request.POST['password']
-        check_user =User.objects.filter(username=username)
+        check_user =User.objects.filter(email=Email)
         if check_user:
             messages.info(request,"Username already exists")
         else:
-            user = User.objects.create_user(username=username,password=password,email=Email,first_name=Name)
-            user.save()
-            return redirect('login')
+            # otp = create_otp()
+            # print(otp)
+            send_otp(request)
+            
+            request.session['Name']=Name
+            request.session['username']=username
+            request.session['Email']=Email
+            request.session['password']=password
+            return redirect('otp_check')
      return render(request,'register.html')
+
+def otp_check(request):
+    if request.method == 'POST':
+        user_otp = request.POST['otp']
+        otp = request.session.get('otp','')
+        print(user_otp)
+        print(otp)
+        if user_otp == otp:
+            password =request.session.get('password','')
+            Name = request.session.get('Name','')
+            username = request.session.get('username','')
+            email = request.session.get('Email','')
+
+            user=User.objects.create_user(username=username,password=password,email=email,first_name=Name)
+            user.save()
+            
+            return redirect('login')
+        
+        else:
+            error_message="Inalid OTP Please Enter correct OTP"
+            return render(request, 'otp.html', {'error_message':error_message})
+    return render(request, 'otp.html')
 
 def logout_page(request):
     logout(request)

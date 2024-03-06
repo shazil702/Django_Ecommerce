@@ -43,6 +43,7 @@ urlpatterns = [
     path('apply_coupon/', views.apply_coupon, name='apply_coupon'),
     path('success/', Success.as_view(), name='success'),
     path('login/',(views.login_page), name='login'),
+    path('otp_check/', views.otp_check, name='otp_check'),
     path('register/',(views.register), name='register'),
     path('logout/', views.logout_page, name='logout'),
     

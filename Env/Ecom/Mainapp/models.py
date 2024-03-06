@@ -1,6 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from Checkout.models import Adress
+import uuid
 
 
 # Create your models here.
@@ -19,7 +20,7 @@ class Prod_Coupon(models.Model):
     coupon_min_amount = models.FloatField(default=1)
     coupon_maxuse = models.FloatField(default=1)
     active = models.BooleanField()
-    user = models.ForeignKey(User, null=True, blank=True,  on_delete=models.SET_NULL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,  on_delete=models.SET_NULL)
     
     def __str__(self):
         return self.coupon_name
@@ -51,10 +52,9 @@ class Product(models.Model):
         return self.product_name
     
 
-
 class Cart_Product(models.Model):
     product=models.ForeignKey(Product, on_delete=models.CASCADE)
-    user=models.ForeignKey(User, on_delete=models.CASCADE)
+    user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     quantity=models.IntegerField(default=1)
     size=models.IntegerField(default=5)
     date=models.DateTimeField(auto_now_add=True)
@@ -66,9 +66,17 @@ class Cart_Product(models.Model):
         return self.product
     
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    order_id = models.CharField(max_length=30)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    order_id = models.CharField(max_length=25, unique=True)
     product = models.ManyToManyField(Product)
     address = models.ForeignKey(Adress, on_delete=models.CASCADE, null=True, blank=True)
     amount = models.FloatField(default=1)
     payment_status = models.BooleanField()
+
+    def save(self, *args, **kwargs):
+        if not self.order_id:
+            self.order_id = str(uuid.uuid4())[:25]
+        super().save(*args, **kwargs)
+    def __str__(self):
+        name = self.user.first_name
+        return name + " " + self.order_id
