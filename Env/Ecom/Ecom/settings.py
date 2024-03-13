@@ -94,10 +94,10 @@ WSGI_APPLICATION = 'Ecom.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ecom_database',
-        'USER': 'postgres',
-        'PASSWORD': '8129',
-        'HOST': 'localhost',
+        'NAME': 'ecomdata',
+        'USER': 'shaz',
+        'PASSWORD': 'shaz1234',
+        'HOST': 'ecomdata.cv8sm24g2h3c.ap-southeast-2.rds.amazonaws.com',
         'PORT': '5432',
     }
 }
@@ -182,3 +182,14 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'shazilva2@gmail.com'
 EMAIL_HOST_PASSWORD = 'vvob kkop hxvd ivef'
+
+
+AWS_ACCESS_KEY_ID = 'AKIAQ3EGWL5DPCNWJS6Z'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'ecombkt'
+AWS_S3_SIGNATURE_NAME = 's3v4',
+AWS_S3_REGION_NAME = 'ap-southeast-2'
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL =  None
+AWS_S3_VERITY = True
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'    

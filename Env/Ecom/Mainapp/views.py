@@ -282,7 +282,7 @@ def register(request):
         password = request.POST['password']
         check_user =User.objects.filter(email=Email)
         if check_user:
-            messages.info(request,"Username already exists")
+            messages.info(request,"Email already exists")
         else:
             # otp = create_otp()
             # print(otp)
