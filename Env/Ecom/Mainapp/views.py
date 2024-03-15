@@ -251,9 +251,9 @@ def login_page(request):
         email = request.POST['email']
         password = request.POST['password']
         user = authenticate(request,email=email,password=password)
-        # if user and user.is_superuser:
-        #     login(request,user)
-        #     return redirect('admin:index')
+        if user and user.is_superuser:
+            login(request,user)
+            return redirect('admin:index')
         if user is not None:
             login(request,user)
             return redirect('index')
