@@ -69,7 +69,7 @@
               </div>
             </li>
 	          <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">About</a></li>
-	          <li class="nav-item"><a href="{% url 'blog' %}" class="nav-link">Blog</a></li>
+	          <li class="nav-item"><a href="{% url 'orders' %}" class="nav-link">Orders</a></li>
 	          
 	          <li class="nav-item cta cta-colored"><a href="{% url 'cart' %}" class="nav-link"><span class="icon-shopping_cart"></span>[0]</a></li>
 
@@ -96,105 +96,7 @@
         <div class="row justify-content-center">
           <div class="col-xl-10 ftco-animate">
 		<div class="row">
-			<!-- <div class="col-md-8">
-				
-			
-						<form action="{% url 'checkout' %}" class="billing-form" id="billing-form" method="post" enctype="multipart/form-data">
-							{% csrf_token %}
-							<h3 class="mb-4 billing-heading">Billing Details</h3>
-	          	<div class="row align-items-end">
-	          		<div class="col-md-8">
-						<form action="{% url 'checkout' %}" method="post" enctype="multipart/form-data">
-							{% csrf_token %}
-							<div class="form-group">
-								<label for="select_adress">Select Address:</label>
-								<select class="form-control" id="select_adress" name="select_adress">
-									<option value="">Select Address</option>
-                                    {% for adress in adressess %}
-                                    <option value="{{ adress.adress_id }}">{{ adress.adress_name }}</option>
-                                    {% endfor %}
-								</select>
-							</div>
-						</form>
-	                <div class="form-group">
-	                	<label for="firstname">Firt Name</label>
-	                  <input type="text" class="form-control address-field" placeholder="John" name="firstname" id="firstname" required >
-	                </div>
-	              </div>
-	              <div class="col-md-6">
-	                <div class="form-group">
-	                	<label for="lastname">Last Name</label>
-	                  <input type="text" class="form-control address-field" placeholder="Wick" name="lastname" id="lastname" required >
-	                </div>
-                </div>
-                <div class="w-100"></div>
-		            <div class="col-md-12">
-		            	<div class="form-group">
-		            		<label for="country">State / Country</label>
-		            		<div class="select-wrap">
-		                  <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-		                  <select  id="state" class="form-control address-field" name="state"  required >
-		                  	<option value="France">France</option>
-		                    <option value="Italy">Italy</option>
-		                    <option value="Philippines">Philippines</option>
-		                    <option value="South Korea">South Korea</option>
-		                    <option value="Hongkong">Hongkong</option>
-		                    <option value="Japan">Japan</option>
-		                  </select>
-		                </div>
-		            	</div>
-		            </div>
-		            <div class="w-100"></div>
-		            <div class="col-md-6">
-		            	<div class="form-group">
-	                	<label for="streetaddress">Street Address</label>
-	                  <input type="text" class="form-control address-field" placeholder="House number and street name"  name="streetaddress" id="streetaddress" required>
-	                </div>
-		            </div>
-		            <div class="col-md-6">
-		            	<div class="form-group">
-	                  <input type="text" class="form-control address-field" placeholder="Appartment, suite, unit etc: (optional)" name="area" id="area" required>
-	                </div>
-		            </div>
-		            <div class="w-100"></div>
-		            <div class="col-md-6">
-		            	<div class="form-group">
-	                	<label for="towncity">Town / City</label>
-	                  <input type="text" class="form-control address-field" placeholder=""  name="city" id="city" required>
-	                </div>
-		            </div>
-		            <div class="col-md-6">
-		            	<div class="form-group">
-		            		<label for="postcodezip">Postcode / ZIP *</label>
-	                  <input type="text" class="form-control address-field" placeholder=""  name="pincode" id="pincode" required>
-	                </div>
-		            </div>
-		            <div class="w-100"></div>
-		            <div class="col-md-6">
-	                <div class="form-group">
-	                	<label for="phone">Phone</label>
-	                  <input type="text" class="form-control address-field" placeholder=""  name="phone" id="phone" required>
-	                </div>
-	              </div>
-	              <div class="col-md-6">
-	                <div class="form-group">
-	                	<label for="emailaddress">Email Address</label>
-	                  <input type="text" class="form-control" placeholder="" required>
-	                </div>
-                </div>
-                <div class="w-100"></div>
-                <div class="col-md-12">
-                	<div class="form-group mt-4">
-						<div class="radio">
-						  <label class="mr-3"><input type="checkbox" name="checkaddress" id="check-adrs"> Confirm Address </label>
-						  
-						</div>
-					</div>
-                </div>
-	            </div>
-			</form>
-	          
-	  </div> -->
+	
 	  <div class="col-md-7 ftco-animate">
 		<div class="cart-list">
 			<table class="table">
@@ -295,31 +197,31 @@
 	          	<div class="col-md-6">
 	          		<div class="cart-detail bg-light p-3 p-md-4">
 	          			<h3 class="billing-heading mb-4">Payment Method</h3>
-								
+						  <form action="{% url 'success' %}" method="post" enctype="multipart/form-data">
+							{% csrf_token %}
 									<div class="form-group">
 										<div class="col-md-12">
 											<div class="radio">
-											   <label><input type="radio" name="optradio" class="mr-2"> Razorpay</label>
+											   <label><input type="radio" name="optradio" class="mr-2" value="razorpay"> Razorpay</label>
 											</div>
 										</div>
 									</div>
 									<div class="form-group">
 										<div class="col-md-12">
 											<div class="radio">
-											   <label><input type="radio" name="optradio" class="mr-2"> Cash On Delivery</label>
+											   <label><input type="radio" name="optradio" class="mr-2" value="cod"> Cash On Delivery</label>
 											</div>
 										</div>
 									</div>
 									<div class="form-group">
 										<div class="col-md-12">
 											<div class="checkbox">
-											   <label><input type="checkbox" value="" class="mr-2" required> I have read and accept the terms and conditions</label>
+											   <label><input type="checkbox" name="check" id="terms" class="mr-2" required> I have read and accept the terms and conditions</label>
 											</div>
 										</div>
 									</div>
-									<!-- <p><a href="#"class="btn btn-primary py-3 px-4">Place an order</a></p> -->
-									<form action="" method="post" enctype="multipart/form-data">
-										{% csrf_token %}
+									
+									
 									<button type="submit" id="rzp-button" class="btn btn-primary py-3 px-5">place an order</button>
 								</form>
 									{% if error_mssg %}
@@ -434,105 +336,57 @@
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <script>
-	document.addEventListener('DOMContentLoaded', function(){
-		var option = {
-			"key": "rzp_test_6gQ0trEdPai7zw",
-			"amount": "{% widthratio all_total 1 100 %}",
-            "currency": "INR",
-            "name": "Mini Shop",
-            "description": "Donation",
-            "image": "https://colorlib.com/polygon/adventure/img/logo.png",
-			"order_id": "{{ order_id|default:'' }}",
-			"handler": function (response){
-				var form = document.createElement('form');
-				form.method = 'POST';
-				form.action = '/success/';
-				document.body.appendChild(form);
-				form.submit();
-			},
-			"prefill": {
-        "name": "Gaurav Kumar",
-        "email": "gaurav.kumar@example.com",
-        "contact": "9000090000"
-    },
-			"theme": {
-				"color": "#333333"
-			}
-
-		};
-		var rzp = new Razorpay(option);
-			document.getElementById('rzp-button').addEventListener('click', function(e){
-				e.preventDefault();
-				var adres_fld = document.getElementsByClassName('address-field');
-				var fld_filled = true;
-				for (var i = 0; i < adres_fld.length; i++) {
-                    if (adres_fld[i].value == '') {
-                        fld_filled = false;
-						break;
-                    }
-                }
-				if(fld_filled){
-					rzp.open();
-				}
-				else{
-                    alert('Please fill all the fields');
-                }
-				
-
-	})
-			})
-
-$(document).ready(function(){
-	$('#select_adress').change(function(){
-		var pk = $(this).val();
-		$.ajax({
-			url: '/get_address/' + pk + '/',
-			type: 'GET',
-            dataType: 'json',
-            success: function(data){
-				$('#firstname').val(data.adress_name);
-				$('#lastname').val(data.adress_lastname);
-				$('#state').val(data.adress_state);
-				$('#streetaddress').val(data.adress_house);
-				$('#area').val(data.adress_area);
-				$('#city').val(data.adress_city);
-				$('#pincode').val(data.adress_pincode);
-				$('#phone').val(data.adress_phone);
-
-	},
-	error: function(data){
-        alert('adress failed to load');
-    }
-	});
-});
-});
-
-$(document).ready(function(){
-	function updateTotal(){
-		$.ajax({
-			url: '/total_price/',
-			method: 'GET',
-			success: function(response){
-				$('#subtotal').text('₹'+response.total_price);
-				$("#all-total").text('₹'+response.all_total);
-			},
-			error: function(error){
-				console.log(error);
-			}
-		});
-	}
-	updateTotal();
-
-    
-    $(window).on('pageshow', function(event) {
-        if (event.originalEvent.persisted) {
-            updateTotal();
+document.addEventListener('DOMContentLoaded', function(){
+    var rzp;
+    var option = {
+        "key": "rzp_test_6gQ0trEdPai7zw",
+        "amount": "{% widthratio all_total 1 100 %}",
+        "currency": "INR",
+        "name": "Mini Shop",
+        "description": "Donation",
+        "image": "https://colorlib.com/polygon/adventure/img/logo.png",
+        "order_id": "{{ order_id|default:'' }}",
+        "handler": function (response){
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/success/';
+            document.body.appendChild(form);
+            form.submit();
+        },
+        "prefill": {
+            "name": "Gaurav Kumar",
+            "email": "gaurav.kumar@example.com",
+            "contact": "9000090000"
+        },
+        "theme": {
+            "color": "#333333"
         }
+    };
+
+    rzp = new Razorpay(option);
+    document.getElementById('rzp-button').addEventListener('click', function(e){
+        e.preventDefault();
+        var selectedPaymentMethod = document.querySelector('input[name="optradio"]:checked').value;
+		var terms = document.getElementById('terms');
+		if(terms.checked==true){
+        if(selectedPaymentMethod === "razorpay") {
+            rzp.open();
+        } else if (selectedPaymentMethod === 'cod') {
+			var form =document.createElement('form');
+			form.method='POST';
+			form.action='/success/';
+			document.body.appendChild(form);
+			form.submit();
+            
+            } else {
+                alert('Please select a payment method.');
+            }
+		}
+		else{
+			alert('Accept the Terms and conditions')
+		}
     });
-
-    
 });
-
 
 	</script>
     

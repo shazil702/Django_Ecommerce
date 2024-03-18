@@ -39,11 +39,11 @@ def search(request):
         return render(request, 'search.html',{'get_products':get_product})
 
 
-
-def blog(request):
+@login_required(login_url='login')
+def orders(request):
     user = request.user
     orders = Order.objects.filter(user=user)
-    return render(request, 'blog.html', {'orders':orders})
+    return render(request, 'orders.html', {'orders':orders})
 
 
 
@@ -192,20 +192,25 @@ def apply_coupon(request):
     all_total = request.session.get('all_total',0)
     items= Cart_Product.objects.filter(user=request.user)
     if request.method == 'POST':
-        code = request.POST['coupon_code']
-        coupon = Prod_Coupon.objects.get(coupon_code=code, active=True, coupon_from__lte = timezone.now(), coupon_to__gte = timezone.now())
-        all_total = all_total - coupon.coupon_discount
-        coupon_disc = coupon.coupon_discount
-        msg = "Coupon applied successfully"
-        return render(request, 'checkout.html', {'messages':msg, 'total_price':total_price,'all_total':all_total, 'coupon_disc':coupon_disc, 'items':items })
-    
+        try:
+            code = request.POST['coupon_code']
+            coupon = Prod_Coupon.objects.get(coupon_code=code, active=True, coupon_from__lte = timezone.now(), coupon_to__gte = timezone.now())
+            all_total = all_total - coupon.coupon_discount
+            coupon_disc = coupon.coupon_discount
+            msg = "Coupon applied successfully"
+            request.session['all_total']= all_total
+            return render(request, 'checkout.html', {'messages':msg, 'total_price':total_price,'all_total':all_total, 'coupon_disc':coupon_disc, 'items':items })
+        except:
+            msg= "Coupon does not exists "
+            return render(request, 'checkout.html', {'messages':msg, 'total_price':total_price,'all_total':all_total, 'items':items })
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class Success(View):
     model=Product
     template_name='success.html'
     
-    def order(self, request):
+    def order(self, request, payment_status):
         all_total = request.session.get('all_total',0)
         adress = request.session.get('address_id',0)
         user = request.user
@@ -215,7 +220,7 @@ class Success(View):
             order = Order.objects.create(
                 user=user,
                 amount = all_total,
-                payment_status=True,
+                payment_status=payment_status,
                 address=address_instance
                 
             )
@@ -230,8 +235,12 @@ class Success(View):
     def get(self, request):
         return render(request, self.template_name)
     def post(self, request):
-        self.order(request)
-        return redirect('success')
+        payment_method = request.POST.get('optradio')
+        if payment_method == 'razorpay':
+            payment_status = True
+        else:
+            payment_status = False
+        return self.order(request, payment_status)
     
 
 def index(request):
