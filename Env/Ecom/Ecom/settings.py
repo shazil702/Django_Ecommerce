@@ -64,6 +64,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'shazil.shop',
+    'www.shazil.shop',
+]
 
 
 SESSION_EXPIRE_SECONDS = 2592000 
