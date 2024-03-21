@@ -65,8 +65,10 @@ MIDDLEWARE = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'shazil.shop',
-    'www.shazil.shop',
+    'http://shazil.shop',
+    'https://shazil.shop',
+    'http://www.shazil.shop',
+    'https://www.shazil.shop',
 ]
 
 
