@@ -17,7 +17,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views import View
 from django.core.mail import send_mail
 import random
-from django.conf import settings
+from Ecom import settings
 
 # Create your views here.
 def about(request):
@@ -158,7 +158,7 @@ def checkout(request):
     items= Cart_Product.objects.filter(user=user)
     adressess = Adress.objects.filter(adress_user=user)
     if request.method == 'POST':    
-        client = razorpay.Client(auth=("rzp_test_6gQ0trEdPai7zw", "8BPqLZ2nzJMX3sobgMMic4W2"))
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
         order_amount = int(all_total*100)
         order_currency = 'INR'
         order_receipt = f'order_receipt_{Adress.adress_id}'[:40]
